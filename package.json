@@ -6,7 +6,9 @@
   "scripts": {
     "start": "npx serve .",
     "dev": "npx serve tools/wallpaper-studio",
-    "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests yet\" && exit 0",
+    "build": "echo \"No build step needed\"",
+    "lint": "echo \"No linter configured\""
   },
   "keywords": [
     "interactive",
