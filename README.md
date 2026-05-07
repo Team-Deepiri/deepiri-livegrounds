@@ -1,6 +1,5 @@
 # Deepiri Livegrounds
 
-Revolutionary interactive backgrounds that run everywhere.
 
 ## What is this?
 
