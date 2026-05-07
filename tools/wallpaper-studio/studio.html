@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Background Studio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d0d14;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 20px 30px;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      gap: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: #12121c;
+      padding: 20px;
+      border-right: 1px solid #2a2a4a;
+      overflow-y: auto;
+    }
+
+    .panel {
+      margin-bottom: 24px;
+    }
+
+    .panel h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .control-group {
+      margin-bottom: 16px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: #2a2a4a;
+      border-radius: 2px;
+      appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #4ecdc4;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 32px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #2a2a4a;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 8px 12px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 4px;
+      color: #e0e0e0;
+      font-size: 0.85rem;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: #4ecdc4;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+      color: #0d0d14;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+    }
+
+    .btn-secondary {
+      background: #2a2a4a;
+      color: #e0e0e0;
+    }
+
+    .btn-secondary:hover {
+      background: #3a3a5a;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .canvas-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .canvas-container {
+      flex: 1;
+      background: #1a1a2e;
+      border-radius: 12px;
+      border: 1px solid #2a2a4a;
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+    }
+
+    #preview-canvas {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #12121c;
+      border-radius: 8px;
+      border: 1px solid #2a2a4a;
+    }
+
+    .info-bar .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ecdc4;
+    }
+
+    .status-dot.inactive {
+      background: #666;
+    }
+
+    .export-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .export-btn {
+      padding: 12px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .export-btn:hover {
+      border-color: #4ecdc4;
+      background: #2a2a4a;
+    }
+
+    .export-btn span {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .btn-upload {
+      background: #1a1a2e;
+      border: 1px dashed #4ecdc4;
+      color: #4ecdc4;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-upload:hover {
+      background: rgba(78, 205, 196, 0.1);
+    }
+
+    .preview-section {
+      background: #12121c;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .preview-section h4 {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .thumbnail-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .thumbnail {
+      width: 60px;
+      height: 40px;
+      border-radius: 4px;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      overflow: hidden;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Interactive Background Studio</h1>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="panel">
+        <h3>Canvas Size</h3>
+        <div class="control-group">
+          <label>Width</label>
+          <input type="number" id="canvas-width" value="1280" min="320" max="3840">
+        </div>
+        <div class="control-group">
+          <label>Height</label>
+          <input type="number" id="canvas-height" value="720" min="240" max="2160">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Particles</h3>
+        <div class="control-group">
+          <label>Count: <span id="particle-count-val">200</span></label>
+          <input type="range" id="particle-count" min="50" max="500" value="200">
+        </div>
+        <div class="control-group">
+          <label>Base Size: <span id="particle-size-val">6</span></label>
+          <input type="range" id="particle-size" min="2" max="20" value="6">
+        </div>
+        <div class="control-group">
+          <label>Speed: <span id="speed-val">3</span></label>
+          <input type="range" id="speed" min="1" max="10" value="3">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Colors</h3>
+        <div class="control-group">
+          <label>Primary</label>
+          <input type="color" id="color1" value="#ff6b6b">
+        </div>
+        <div class="control-group">
+          <label>Secondary</label>
+          <input type="color" id="color2" value="#4ecdc4">
+        </div>
+        <div class="control-group">
+          <label>Background</label>
+          <input type="color" id="bg-color" value="#1a1a2e">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Effects</h3>
+        <div class="control-group">
+          <label>Grid</label>
+          <select id="grid-effect">
+            <option value="subtle">Subtle</option>
+            <option value="none">None</option>
+            <option value="prominent">Prominent</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>Mouse Glow</label>
+          <input type="range" id="mouse-glow" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Export All Formats</h3>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="export-all">Generate All</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Load Background</h3>
+        <input type="file" id="load-bg" class="file-input" accept="image/*">
+        <label for="load-bg" class="btn-upload">
+          Click to load an existing interactive background
+        </label>
+      </div>
+    </aside>
+
+    <main class="canvas-area">
+      <div class="canvas-container" id="canvas-wrapper">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+
+      <div class="info-bar">
+        <div class="status">
+          <div class="status-dot" id="status-dot"></div>
+          <span id="status-text">Ready - Click on canvas to interact</span>
+        </div>
+        <div class="export-options">
+          <button class="export-btn" data-format="png">
+            <span>PNG</span>
+            Interactive
+          </button>
+          <button class="export-btn" data-format="svg">
+            <span>SVG</span>
+            Vector
+          </button>
+          <button class="export-btn" data-format="webp">
+            <span>WebP</span>
+            Modern
+          </button>
+          <button class="export-btn" data-format="bmp">
+            <span>BMP</span>
+            Windows
+          </button>
+          <button class="export-btn" data-format="jpg">
+            <span>JPG</span>
+            Standard
+          </button>
+          <button class="export-btn" data-format="wallpaper">
+            <span>WALL</span>
+            Windows
+          </button>
+          <button class="export-btn" data-format="theme">
+            <span>THEME</span>
+            Win Theme
+          </button>
+          <button class="export-btn" data-format="zip">
+            <span>ZIP</span>
+            Bundle
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../src/interactive-background/core-engine.js"></script>
+  <script src="../../src/interactive-background/encoder.js"></script>
+  <script src="../../src/interactive-background/player.js"></script>
+  <script src="export-wallpaper.js"></script>
+  <script src="../../src/interactive-background/wallpaper-bundler.js"></script>
+  <script>
+    const canvas = document.getElementById('preview-canvas');
+    const wrapper = document.getElementById('canvas-wrapper');
+
+    const ENGINE_CODE = `
+      const InteractiveEngine = (() => {
+        const CONFIG = { TARGET_FPS: 30, MAX_PARTICLES: {{PARTICLE_COUNT}}, COLORS: {{COLORS}} };
+        class Particle {
+          constructor(x, y, canvas) {
+            this.canvas = canvas;
+            this.reset(x, y);
+          }
+          reset(x, y) {
+            this.x = x ?? Math.random() * this.canvas.width;
+            this.y = y ?? Math.random() * this.canvas.height;
+            this.vx = (Math.random() - 0.5) * {{SPEED}};
+            this.vy = (Math.random() - 0.5) * {{SPEED}};
+            this.size = Math.random() * {{PARTICLE_SIZE}} + {{PARTICLE_SIZE_MIN}};
+            this.color = CONFIG.COLORS[Math.floor(Math.random() * CONFIG.COLORS.length)];
+            this.life = 1;
+            this.decay = Math.random() * 0.01 + 0.005;
+            this.trail = [];
+          }
+          update() {
+            this.trail.push({ x: this.x, y: this.y, life: this.life });
+            if (this.trail.length > 10) this.trail.shift();
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+            if (this.x < 0 || this.x > this.canvas.width || this.y < 0 || this.y > this.canvas.height || this.life <= 0) this.reset();
+          }
+          draw(ctx) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.life;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            if (this.trail.length > 1) {
+              ctx.beginPath();
+              ctx.moveTo(this.trail[0].x, this.trail[0].y);
+              for (let i = 1; i < this.trail.length; i++) ctx.lineTo(this.trail[i].x, this.trail[i].y);
+              ctx.strokeStyle = this.color;
+              ctx.globalAlpha = this.life * 0.3;
+              ctx.lineWidth = this.size * 0.5;
+              ctx.stroke();
+              ctx.globalAlpha = 1;
+            }
+          }
+        }
+        class Engine {
+          constructor(canvasId, options = {}) {
+            this.canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
+            this.ctx = this.canvas.getContext('2d');
+            this.particles = [];
+            this.mouseX = 0;
+            this.mouseY = 0;
+            this.isRunning = false;
+            this.lastTime = 0;
+            this.deltaTime = 0;
+            this.mode = options.mode || 'particles';
+            this.interactive = options.interactive !== false;
+            this.init();
+          }
+          init() {
+            this.resize();
+            this.createParticles();
+            if (this.interactive) {
+              this.canvas.addEventListener('mousemove', (e) => {
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouseX = e.clientX - rect.left;
+                this.mouseY = e.clientY - rect.top;
+              });
+              this.canvas.addEventListener('click', (e) => {
+                const rect = this.canvas.getBoundingClientRect();
+                this.spawnBurst(e.clientX - rect.left, e.clientY - rect.top);
+              });
+            }
+            window.addEventListener('resize', () => this.resize());
+          }
+          resize() {
+            const rect = this.canvas.parentElement.getBoundingClientRect();
+            this.canvas.width = rect.width;
+            this.canvas.height = rect.height;
+          }
+          createParticles() {
+            this.particles = [];
+            for (let i = 0; i < CONFIG.MAX_PARTICLES; i++) this.particles.push(new Particle(null, null, this.canvas));
+          }
+          spawnBurst(x, y) {
+            for (let i = 0; i < 20; i++) {
+              const p = new Particle(x, y, this.canvas);
+              p.vx = (Math.random() - 0.5) * 10;
+              p.vy = (Math.random() - 0.5) * 10;
+              this.particles.push(p);
+            }
+            if (this.particles.length > CONFIG.MAX_PARTICLES * 2) this.particles.splice(0, 20);
+          }
+          update() {
+            for (const p of this.particles) {
+              const dx = p.x - this.mouseX, dy = p.y - this.mouseY, dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 100 && dist > 0) {
+                const force = (100 - dist) / 100;
+                p.vx += (dx / dist) * force * 0.5;
+                p.vy += (dy / dist) * force * 0.5;
+              }
+              p.update();
+            }
+          }
+          draw() {
+            this.ctx.fillStyle = '{{BG_COLOR}}';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            {{GRID_CODE}}
+            for (const p of this.particles) p.draw(this.ctx);
+            this.drawOverlay();
+          }
+          drawGrid() {
+            this.ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            this.ctx.lineWidth = 1;
+            for (let x = 0; x < this.canvas.width; x += 50) { this.ctx.beginPath(); this.ctx.moveTo(x, 0); this.ctx.lineTo(x, this.canvas.height); this.ctx.stroke(); }
+            for (let y = 0; y < this.canvas.height; y += 50) { this.ctx.beginPath(); this.ctx.moveTo(0, y); this.ctx.lineTo(this.canvas.width, y); this.ctx.stroke(); }
+          }
+          drawOverlay() {
+            const gradient = this.ctx.createRadialGradient(this.mouseX, this.mouseY, 0, this.mouseX, this.mouseY, 200);
+            gradient.addColorStop(0, 'rgba(78, 205, 196, {{GLOW_ALPHA}})');
+            gradient.addColorStop(1, 'transparent');
+            this.ctx.fillStyle = gradient;
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+          }
+          loop(timestamp) {
+            if (!this.isRunning) return;
+            this.deltaTime = timestamp - this.lastTime;
+            this.lastTime = timestamp;
+            if (this.deltaTime >= 1000 / CONFIG.TARGET_FPS) { this.update(); this.draw(); this.deltaTime = 0; }
+            requestAnimationFrame((t) => this.loop(t));
+          }
+          start() { this.isRunning = true; this.lastTime = performance.now(); this.loop(this.lastTime); }
+          stop() { this.isRunning = false; }
+        }
+        return { Engine, Particle, CONFIG };
+      })();
+    `;
+
+    let engine = null;
+
+    function getConfig() {
+      return {
+        particleCount: parseInt(document.getElementById('particle-count').value),
+        particleSize: parseInt(document.getElementById('particle-size').value),
+        speed: parseInt(document.getElementById('speed').value),
+        colors: [
+          document.getElementById('color1').value,
+          document.getElementById('color2').value,
+          '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9'
+        ],
+        bgColor: document.getElementById('bg-color').value,
+        gridEffect: document.getElementById('grid-effect').value,
+        glow: parseInt(document.getElementById('mouse-glow').value) / 100
+      };
+    }
+
+    function generateEngineCode(config) {
+      let code = ENGINE_CODE
+        .replace('{{PARTICLE_COUNT}}', config.particleCount)
+        .replace('{{PARTICLE_SIZE}}', config.particleSize)
+        .replace('{{PARTICLE_SIZE_MIN}}', config.particleSize / 2)
+        .replace('{{SPEED}}', config.speed)
+        .replace('{{BG_COLOR}}', config.bgColor)
+        .replace('{{GLOW_ALPHA}}', config.glow * 0.2);
+
+      if (config.gridEffect === 'none') {
+        code = code.replace('{{GRID_CODE}}', '');
+      } else if (config.gridEffect === 'prominent') {
+        code = code.replace('{{GRID_CODE}}`, "this.drawGrid(); } else { this.drawGrid = () => {} }");
+        code = code.replace("this.ctx.strokeStyle = 'rgba(255,255,255,0.03)'", "this.ctx.strokeStyle = 'rgba(255,255,255,0.08)'");
+      } else {
+        code = code.replace('{{GRID_CODE}}', 'this.drawGrid();');
+      }
+
+      return JSON.stringify(config.colors.map(c => c.replace('#', ''))).replace(/"/g, "'");
+    }
+
+    function initCanvas() {
+      const width = parseInt(document.getElementById('canvas-width').value);
+      const height = parseInt(document.getElementById('canvas-height').value);
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    function startEngine() {
+      if (engine) engine.stop();
+      engine = new InteractiveEngine.Engine(canvas, { interactive: true });
+      engine.start();
+      document.getElementById('status-dot').classList.remove('inactive');
+      document.getElementById('status-text').textContent = 'Running - Click on canvas to interact';
+    }
+
+    document.getElementById('particle-count').addEventListener('input', (e) => {
+      document.getElementById('particle-count-val').textContent = e.target.value;
+    });
+
+    document.getElementById('particle-size').addEventListener('input', (e) => {
+      document.getElementById('particle-size-val').textContent = e.target.value;
+    });
+
+    document.getElementById('speed').addEventListener('input', (e) => {
+      document.getElementById('speed-val').textContent = e.target.value;
+    });
+
+    document.querySelectorAll('.export-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const format = btn.dataset.format;
+        const config = getConfig();
+        
+        canvas.width = parseInt(document.getElementById('canvas-width').value);
+        canvas.height = parseInt(document.getElementById('canvas-height').value);
+        
+        const tempEngine = new InteractiveEngine.Engine(canvas, { interactive: true });
+        tempEngine.start();
+        
+        await new Promise(r => setTimeout(r, 500));
+        tempEngine.stop();
+
+        const engineCode = generateEngineCode(config);
+        let blob, filename;
+
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+
+        switch(format) {
+          case 'png':
+            blob = await InteractiveEncoder.encodePNG(tempCanvas, engineCode, config);
+            filename = 'interactive-bg.png';
+            break;
+          case 'svg':
+            const svgContent = InteractiveEncoder.encodeSVG(tempCanvas, engineCode, config);
+            blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            filename = 'interactive-bg.svg';
+            break;
+          case 'webp':
+            blob = await InteractiveEncoder.encodeWebP(tempCanvas, engineCode, config);
+            filename = 'interactive-bg.webp';
+            break;
+          case 'bmp':
+            blob = await InteractiveEncoder.encodeBMP(tempCanvas, engineCode, config);
+            filename = 'interactive-bg.bmp';
+            break;
+          case 'jpg':
+            blob = await InteractiveEncoder.encodeJPG(tempCanvas, engineCode, config);
+            filename = 'interactive-bg.jpg';
+            break;
+          case 'wallpaper':
+            blob = WallpaperBundler.createWindowsWallpaper(tempCanvas, config, engineCode);
+            filename = 'my-wallpaper.wallpaper';
+            break;
+          case 'theme':
+            blob = WallpaperBundler.createWindowsTheme(tempCanvas, config, engineCode);
+            filename = 'my-wallpaper.theme';
+            break;
+          case 'zip':
+            blob = WallpaperBundler.createZipBundle(tempCanvas, config, engineCode);
+            filename = 'my-wallpaper.zip';
+            break;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        startEngine();
+      });
+    });
+
+    document.getElementById('export-all').addEventListener('click', async () => {
+      const formats = ['png', 'svg', 'webp', 'bmp', 'jpg'];
+      for (const format of formats) {
+        document.querySelector(`[data-format="${format}"]`).click();
+        await new Promise(r => setTimeout(r, 300));
+      }
+    });
+
+    document.getElementById('load-bg').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const player = new InteractivePlayer.Player(canvas);
+      const data = await player.loadFromFile(file);
+
+      if (data && data.c) {
+        document.getElementById('particle-count').value = data.c.particleCount || 200;
+        document.getElementById('particle-size').value = data.c.particleSize || 6;
+        document.getElementById('speed').value = data.c.speed || 3;
+        document.getElementById('bg-color').value = data.c.bgColor || '#1a1a2e';
+      }
+
+      player.start(data?.c || {});
+    });
+
+    initCanvas();
+    startEngine();
+  </script>
+</body>
+</html>
