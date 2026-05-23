@@ -1,10 +1,10 @@
-# Contributing to Deepiri Livegrounds
+# Contributing to Deepiri Lyback
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/team-deepiri/livegrounds.git
-cd livegrounds
+git clone https://github.com/team-deepiri/lyback.git
+cd lyback
 npm install
 npm run dev
 ```

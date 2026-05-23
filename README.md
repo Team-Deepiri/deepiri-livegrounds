@@ -1,9 +1,9 @@
-# Deepiri Livegrounds
+# Deepiri Lyback
 
 
 ## What is this?
 
-Deepiri Livegrounds lets you create and use interactive backgrounds that:
+Deepiri Lyback lets you create and use interactive backgrounds that:
 - Embed a mini-game/interactive experience directly into image files (PNG, SVG, WebP, BMP, JPG)
 - Run as standalone HTML wallpapers on your desktop
 - Work in browsers without heavy GPU usage
@@ -30,7 +30,7 @@ Deepiri Livegrounds lets you create and use interactive backgrounds that:
 ## Project Structure
 
 ```
-deepiri-livegrounds/
+deepiri-lyback/
 ├── src/interactive-background/
 │   ├── core-engine.js    # Lightweight particle engine
 │   ├── encoder.js        # Embeds game into image formats

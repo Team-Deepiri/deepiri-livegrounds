@@ -1,5 +1,5 @@
 /**
- * Deepiri Livegrounds Configuration Defaults
+ * Deepiri Lyback Configuration Defaults
  */
 const DEEPIRI_DEFAULTS = {
   TARGET_FPS: 30,

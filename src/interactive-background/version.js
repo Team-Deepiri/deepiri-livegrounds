@@ -1,5 +1,5 @@
 /**
- * Deepiri Livegrounds Version Info
+ * Deepiri Lyback Version Info
  */
 const VERSION = '1.0.0';
 const VERSION_INFO = {
