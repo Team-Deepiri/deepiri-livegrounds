@@ -139,8 +139,8 @@ INTERACTION:
 - Move mouse to interact with particles
 - Click to spawn particle bursts
 
-Created with Deepiri Livegrounds
-https://github.com/deepiri/livegrounds
+Created with Deepiri Lyback
+https://github.com/deepiri/lyback
 `;
   }
 

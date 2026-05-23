@@ -1,5 +1,5 @@
 {
-  "name": "deepiri-livegrounds",
+  "name": "deepiri-lyback",
   "version": "1.0.0",
   "description": "Revolutionary interactive backgrounds that run everywhere",
   "main": "src/interactive-background/core-engine.js",
@@ -19,9 +19,9 @@
   ],
   "author": "Deepiri",
   "license": "MIT",
-  "homepage": "https://github.com/deepiri/livegrounds#readme",
+  "homepage": "https://github.com/Team-Deepiri/deepiri-lyback#readme",
   "bugs": {
-    "url": "https://github.com/deepiri/livegrounds/issues"
+    "url": "https://github.com/Team-Deepiri/deepiri-lyback/issues"
   },
   "dependencies": {},
   "devDependencies": {

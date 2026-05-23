@@ -1,9 +1,9 @@
 /**
- * Deepiri Livegrounds - Main Entry Point
+ * Deepiri Lyback - Main Entry Point
  * 
  * Export all modules for easy importing
  */
-const DeepiriLivegrounds = {
+const DeepiriLyback = {
   Engine: InteractiveEngine,
   Encoder: InteractiveEncoder,
   Player: InteractivePlayer,
@@ -13,5 +13,5 @@ const DeepiriLivegrounds = {
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = DeepiriLivegrounds;
+  module.exports = DeepiriLyback;
 }

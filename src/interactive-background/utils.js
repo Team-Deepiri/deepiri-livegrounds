@@ -1,5 +1,5 @@
 /**
- * Utility functions for Deepiri Livegrounds
+ * Utility functions for Deepiri Lyback
  */
 const Utils = {
   hexToRgb(hex) {
